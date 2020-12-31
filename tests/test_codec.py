@@ -19,7 +19,9 @@ class TestCodec(unittest.TestCase):
         data_bin = f.encode(ctrl=fstrm.FSTRM_CONTROL_ACCEPT, ct=[b"protobuf:dnstap.Dnstap"])
         f.append(data=data_bin)
         
-        ft, ct, payload  = f.decode()
+        ft = -1
+        if f.process():
+            ft, ct, payload  = f.decode()
         self.assertEqual( ft, fstrm.FSTRM_CONTROL_ACCEPT )
         
     def test_control_finish(self):
@@ -29,7 +31,9 @@ class TestCodec(unittest.TestCase):
         data_bin = f.encode(ctrl=fstrm.FSTRM_CONTROL_FINISH)
         f.append(data=data_bin)
         
-        ft, ct, payload  = f.decode()
+        ft = -1
+        if f.process():
+            ft, ct, payload  = f.decode()
         self.assertEqual( ft, fstrm.FSTRM_CONTROL_FINISH )
 
     def test_decode_control_start(self):
@@ -39,7 +43,9 @@ class TestCodec(unittest.TestCase):
         data_bin = f.encode(ctrl=fstrm.FSTRM_CONTROL_START)
         f.append(data=data_bin)
         
-        ft, ct, payload  = f.decode()
+        ft = -1
+        if f.process():
+            ft, ct, payload  = f.decode()
         self.assertEqual( ft, fstrm.FSTRM_CONTROL_STOP )
         
     def test_decode_control_stop(self):
@@ -49,7 +55,9 @@ class TestCodec(unittest.TestCase):
         data_bin = f.encode(ctrl=fstrm.FSTRM_CONTROL_STOP)
         f.append(data=data_bin)
         
-        ft, ct, payload  = f.decode()
+        ft = -1
+        if f.process():
+            ft, ct, payload  = f.decode()
         self.assertEqual( ft, fstrm.FSTRM_CONTROL_STOP )
 
     def test_decode_data_frame(self):
@@ -59,5 +67,7 @@ class TestCodec(unittest.TestCase):
         data_frame = f.encode(ctrl=fstrm.FSTRM_DATA_FRAME, payload=b"hello")
         f.append(data=data_frame)
         
-        ft, ct, payload  = f.decode()
+        ft = -1
+        if f.process():
+            ft, ct, payload  = f.decode()
         self.assertEqual( ft, fstrm.FSTRM_DATA_FRAME )
