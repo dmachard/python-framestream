@@ -38,13 +38,15 @@ async def on_connect():
                 do_something(data=payload)
                 
             if ctrl == fstrm.FSTRM_CONTROL_READY:
-                pass
-                
+                accept = f.encode(ctrl=fstrm.FSTRM_CONTROL_ACCEPT, ct=[b"protobuf:dnstap.Dnstap"])
+                writer.write(accept)
+                await writer.drain()
+                    
             if ctrl == fstrm.FSTRM_CONTROL_START:
                 pass
                 
             if ctrl == fstrm.FSTRM_CONTROL_STOP:
-                pass
+                f.reset()  
 
 loop = asyncio.get_event_loop()                
 coro = asyncio.start_server(on_connect, '127.0.0.1', 8888, loop=loop)
