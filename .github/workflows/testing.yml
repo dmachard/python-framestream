@@ -16,5 +16,4 @@ jobs:
         python-version: "3.7"
     - name: Run Python tests 
       run: |
-        sudo python3 -m unittest tests.test_decode
-        sudo python3 -m unittest tests.test_encode
+        sudo python3 -m unittest tests.test_codec
