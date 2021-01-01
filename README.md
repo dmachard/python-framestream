@@ -25,26 +25,35 @@ The example shows how to read raw data and decode-it with the fstrsm library.
 import fstrm
 import asyncio
 
+def do_something(payload):
+    print(payload)
+    
 async def on_connect():
     f = fstrm.FstrmCodec()
 
     while data := await reader.read(f.pending_nb_bytes()) 
         f.append(data=data)
         
-        if fstrm_handler.process():
-            ctrl, ct, payload  = fstrm_handler.decode()
+        # process the buffer and check if we have enough data
+        if f.process():
+            # a frame is complete, decode-it
+            ctrl, ct, payload  = f.decode()
             
+            # data frame ?
             if ctrl == fstrm.FSTRM_DATA_FRAME:
                 do_something(data=payload)
                 
+            # or control frame for handshake ?
             if ctrl == fstrm.FSTRM_CONTROL_READY:
                 accept = f.encode(ctrl=fstrm.FSTRM_CONTROL_ACCEPT, ct=[b"protobuf:dnstap.Dnstap"])
                 writer.write(accept)
                 await writer.drain()
                     
+            # control frame ?
             if ctrl == fstrm.FSTRM_CONTROL_START:
                 pass
                 
+            # control frame ?
             if ctrl == fstrm.FSTRM_CONTROL_STOP:
                 f.reset()  
 
