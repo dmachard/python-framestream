@@ -1,4 +1,3 @@
-__version__ = "0.1.0"
 
 from fstrm.fstrm_codec import FSTRM_DATA_FRAME
 from fstrm.fstrm_codec import FSTRM_CONTROL_ACCEPT

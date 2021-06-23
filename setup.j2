@@ -2,11 +2,6 @@
 
 import setuptools
 
-with open("./fstrm/__init__.py", "r") as fh:
-    for line in fh.read().splitlines():
-        if line.startswith('__version__'):
-            PKG_VERSION = line.split('"')[1]
-            
 with open("README.md", "r") as fh:
     LONG_DESCRIPTION = fh.read()
     
@@ -14,7 +9,7 @@ KEYWORDS = ('framestreams fstrm encoder decoder')
 
 setuptools.setup(
     name="fstrm",
-    version=PKG_VERSION,
+    version="{{ version }}",
     author="Denis MACHARD",
     author_email="d.machard@gmail.com",
     description="Frame Streams implementation in Python",
