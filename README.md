@@ -63,7 +63,7 @@ class FstrmClientProtocol(asyncio.Protocol):
     def data_received(self, data):
         if not self.handshake.done():
             if self.fstrm.is_ctrlaccept(data):
-                self.transport.write(self.fstrm.encode_ctrlstart())
+                self.transport.write(self.fstrm.encode_ctrlstart(self.content_type))
                 self.handshake.set_result(True)
 
     def send_data(self, data):
