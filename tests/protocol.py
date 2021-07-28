@@ -8,7 +8,6 @@ class FstrmServerProtocol(asyncio.Protocol):
         self.fstrm = fstrm.FstrmCodec()
         self.data_recv = data_recv
         self.hanshake_server = hanshake_server
-        self.handshake_done = False
         self.handshake_accept_done = False
 
     def connection_made(self, transport):
@@ -38,7 +37,6 @@ class FstrmClientProtocol(asyncio.Protocol):
     def __init__(self, handshake):
         self.fstrm = fstrm.FstrmCodec()
         self.handshake = handshake
-        self.message = "hello client"
         self.transport = None
 
     def connection_made(self, transport):
