@@ -9,12 +9,15 @@ on:
       - main
 
 jobs:
-  release:
+  dev:
     runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        test: [ 'codec', 'protocol' ]
     steps:
     - uses: actions/checkout@v2
     - uses: actions/setup-python@v2
 
-    - name: Run Python tests 
+    - name: Run ${{ matrix.test }}
       run: |
-        sudo python3 -m unittest tests.test_codec
+        sudo python3 -m unittest tests.${{ matrix.test }} -v

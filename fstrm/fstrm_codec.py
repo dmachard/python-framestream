@@ -108,6 +108,13 @@ class FstrmCodec(object):
             else:
                 return True
                 
+    def append_and_process(self, data):
+        """appand data and process-it"""
+        self.append(data=data)
+        if not self.process():
+            return False
+        return True
+
     def decode(self):
         """decode frame"""
         is_cf = False
@@ -167,3 +174,63 @@ class FstrmCodec(object):
             frame += c   
 
         return frame
+
+    def encode_ctrlready(self, ct):
+        """encode control ready frame"""
+        return self.encode(ctrl=FSTRM_CONTROL_READY, ct=[ct])
+
+    def encode_ctrlaccept(self, ct):
+        """encode control accept frame"""
+        return self.encode(ctrl=FSTRM_CONTROL_ACCEPT, ct=[ct])
+
+    def encode_ctrlstart(self):
+        """encode control start frame"""
+        return self.encode(ctrl=FSTRM_CONTROL_START)
+
+    def encode_data(self, data):
+        """encode data frame"""
+        return self.encode(ctrl=FSTRM_DATA_FRAME, payload=data)
+
+    def is_ctrlaccept(self, data):
+        """is ctrl accept received?"""
+        if not self.append_and_process(data=data):
+            return False
+
+        ctrl, _, _  = self.decode()
+        if ctrl != FSTRM_CONTROL_ACCEPT:
+            raise Exception("unexpected control frame received: %s" % ctrl)
+
+        return True
+
+    def is_ctrlready(self, data):
+        """is ctrl ready received?"""
+        if not self.append_and_process(data=data):
+            return False
+
+        ctrl, _, _  = self.decode()
+        if ctrl != FSTRM_CONTROL_READY:
+            raise Exception("unexpected control frame received: %s" % ctrl)
+
+        return True
+
+    def is_ctrlstart(self, data):
+        """is ctrl start received?"""
+        if not self.append_and_process(data=data):
+            return False
+
+        ctrl, _, _  = self.decode()
+        if ctrl != FSTRM_CONTROL_START:
+            raise Exception("unexpected control frame received: %s" % ctrl)
+
+        return True
+
+    def is_data(self, data):
+        """is data frame received?"""
+        if not self.append_and_process(data=data):
+            return False
+
+        fr, _, pl  = self.decode()
+        if fr != FSTRM_DATA_FRAME:
+            raise Exception("unexpected data frame received: %s" % fr)
+
+        return pl
