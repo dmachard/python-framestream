@@ -183,9 +183,9 @@ class FstrmCodec(object):
         """encode control accept frame"""
         return self.encode(ctrl=FSTRM_CONTROL_ACCEPT, ct=[ct])
 
-    def encode_ctrlstart(self):
+    def encode_ctrlstart(self, ct):
         """encode control start frame"""
-        return self.encode(ctrl=FSTRM_CONTROL_START)
+        return self.encode(ctrl=FSTRM_CONTROL_START, ct=[ct])
 
     def encode_data(self, data):
         """encode data frame"""

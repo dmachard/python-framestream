@@ -48,7 +48,7 @@ class FstrmClientProtocol(asyncio.Protocol):
         if not self.handshake.done():
             if self.fstrm.is_ctrlaccept(data):
                 print('Client - handshake CONTROL_ACCEPT received!')
-                self.transport.write(self.fstrm.encode_ctrlstart())
+                self.transport.write(self.fstrm.encode_ctrlstart(b"plaintext"))
                 print('Client - handshake CONTROL_START sent')
                 self.handshake.set_result(True)
                 print('Client - handshake success!')
