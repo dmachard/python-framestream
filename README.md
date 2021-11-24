@@ -26,7 +26,7 @@ import fstrm
 import asyncio
 
 class FstrmServerProtocol(asyncio.Protocol):
-    def __init__(self, handshake, content_type=b"plaintext"):
+    def __init__(self, handshake, data_recv, content_type=b"plaintext"):
         self.fstrm = fstrm.FstrmCodec()
         self.content_type = content_type
         self.data_recv = data_recv
@@ -40,7 +40,7 @@ class FstrmServerProtocol(asyncio.Protocol):
         if not self.handshake.done():
             if not self.handshake_accept_done:
                 if self.fstrm.is_ctrlready(data):
-                    self.transport.write(self.fstrm.encode_ctrlaccept(self.content_type)
+                    self.transport.write(self.fstrm.encode_ctrlaccept(self.content_type))
                     self.handshake_accept_done = True
             else:
                 if self.fstrm.is_ctrlstart(data):
@@ -48,6 +48,8 @@ class FstrmServerProtocol(asyncio.Protocol):
         else:
             payload = self.fstrm.is_data(data)
             # do someting with the payload...
+            if payload:
+                self.data_recv.set_result(payload)        
 
 class FstrmClientProtocol(asyncio.Protocol):
     def __init__(self, handshake, content_type=b"plaintext"):
@@ -58,7 +60,7 @@ class FstrmClientProtocol(asyncio.Protocol):
 
     def connection_made(self, transport):
         self.transport = transport
-        self.transport.write(self.fstrm.encode_ctrlready(self.content_type)
+        self.transport.write(self.fstrm.encode_ctrlready(self.content_type))
 
     def data_received(self, data):
         if not self.handshake.done():
@@ -72,13 +74,19 @@ class FstrmClientProtocol(asyncio.Protocol):
 
 async def run(loop):
     # Create server and client
+    data_recv = loop.create_future()
     hanshake_server = loop.create_future()
-    server = await loop.create_server(lambda: FstrmServerProtocol(hanshake_server), 'localhost', 8000)
+    server = await loop.create_server(lambda: FstrmServerProtocol(hanshake_server, data_recv), 'localhost', 8000)
 
     hanshake_client = loop.create_future()
     transport, client =  await loop.create_connection(lambda: FstrmClientProtocol(hanshake_client), 'localhost', 8000)
 
     # check handshake
+    try:
+        await asyncio.wait_for(hanshake_server, timeout=5)
+    except asyncio.TimeoutError:
+        raise Exception("handshake server failed")
+
     try:
         await asyncio.wait_for(hanshake_client, timeout=0.5)
     except asyncio.TimeoutError:
@@ -88,7 +96,17 @@ async def run(loop):
     data = b"some data..."
     client.send_data(data)
 
+    # wait data on server side
+    try:
+        await asyncio.wait_for( data_recv, timeout=0.5)
+    except asyncio.TimeoutError:
+        raise Exception("data expected but failed")
+
+    # Shut down server and client
+    server.close()
+    transport.close()
+
 if __name__ == "__main__":
     loop = asyncio.get_event_loop()
-    loop.run_until_complete(run())
+    loop.run_until_complete(run(loop))
 ```
