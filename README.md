@@ -1,15 +1,14 @@
-# Frame Streams implementation in Python
-
 ![Testing](https://github.com/dmachard/python-framestream/workflows/Testing/badge.svg) ![Build](https://github.com/dmachard/python-framestream/workflows/Build/badge.svg) ![Pypi](https://github.com/dmachard/python-framestream/workflows/PyPI/badge.svg)
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-![PyPI - Python Version](https://img.shields.io/pypi/pyversions/fstrm)
+# Frame Streams implementation in Python
 
 Frame Streams is a lightweight, binary-clean protocol that allows for the transport of arbitrarily encoded data payload sequences with minimal framing overhead.
 
 This package provides a pure Python implementation based on https://github.com/farsightsec/fstrm/.
 
 ## Installation
+
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/fstrm)
 
 This module can be installed from [pypi](https://pypi.org/project/fstrm/) website
 
