@@ -71,7 +71,9 @@ class FstrmClientProtocol(asyncio.Protocol):
         payload = self.fstrm.encode_data(data)
         self.transport.write(payload)
 
-async def run(loop):
+async def run():
+    loop = asyncio.get_running_loop()
+
     # Create server and client
     data_recv = loop.create_future()
     hanshake_server = loop.create_future()
@@ -106,6 +108,5 @@ async def run(loop):
     transport.close()
 
 if __name__ == "__main__":
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(run(loop))
+    asyncio.run(run())
 ```
